@@ -3,11 +3,11 @@ const router = express.Router()
 const user = require('../db/users');
 const mongoose = require('mongoose');
 
-/** 
+/**
  * @swagger
  * components:
  *   schemas:
- *     Users:
+ *     Student:
  *       type: object
  *       required:
  *         - name
@@ -16,174 +16,145 @@ const mongoose = require('mongoose');
  *       properties:
  *         name:
  *           type: string
- *           description: The Name of the student
+ *           description: The name of the student
  *         roll:
  *           type: string
- *           description: The Roll no of the student
+ *           description: The roll number of the student
  *         above_18:
  *           type: boolean
- *           description: Student is above 18 or not
- *     responseStudent:
- *         type: object
- *         properties:
- *           _id:
- *              type: string
- *           name:
- *              type: string
- *           roll:
- *              type: string
- *           above_18: 
- *              type: boolean
- *           __v:
- *              type: number
-*/
+ *           description: Indicates whether the student is above 18 years old
+ *     DeleteRequest:
+ *       type: object
+ *       required:
+ *         - ids
+ *       properties:
+ *         ids:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: List of student IDs to delete
+ */
 
 /**
  * @swagger
  * tags:
- *  name: Student Database
- *  description: Simple CRUD operations on Student database.
+ *   name: Student Database
+ *   description: CRUD operations on Student database
  */
 
 /**
  * @swagger
  * /home:
  *   post:
- *     summary: Create a new student
+ *     summary: Add a new student
  *     tags: [Student Database]
  *     requestBody:
- *        required: true
- *        content:
- *          application/json:
- *            schema:
- *              $ref: '#/components/schemas/Users'
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: The name of the student
+ *               roll:
+ *                 type: string
+ *                 description: The roll number of the student
+ *               above_18:
+ *                 type: boolean
+ *                 description: Indicates whether the student is above 18 years old
+ *               uuid:
+ *                 type: string
+ *                 description: User UUID
+ *             required:
+ *               - name
+ *               - roll
+ *               - above_18
+ *               - uuid
  *     responses:
  *       '200':
- *          description: Successful response
- *          content:
- *            application/json:
- *              schema:
- *                %ref: '#/components/schemas/responseStudent'
+ *         description: Successfully added a new student
  *       '500':
- *          description: Internal Server Error
- *          content:
- *              application/json:
- *                  schema:
- *                      %ref: '#/components/schemas/responseStudent'
- * 
- * @swagger
- * /home:
+ *         description: Internal Server Error
+ *
  *   get:
- *     summary: Gives the data of all the students
+ *     summary: Get all students for a user
  *     tags: [Student Database]
+ *     parameters:
+ *       - in: query
+ *         name: uuid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: User UUID
  *     responses:
  *       '200':
- *          description: Successful response
- *          content:
- *            application/json:
- *              schema:
- *                %ref: '#/components/schemas/responseStudent'
+ *         description: List of students
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Student'
  *       '500':
- *          description: Internal Server Error
- *          content:
- *            application/json:
- *              schema:
- *                %ref: '#/components/schemas/responseStudent'
- * 
- * @swagger
+ *         description: Internal Server Error
+ *
  * /home/delete:
- *      delete:
- *          summary: delete records in bulk 
- *          tags: [Student Database]
- *          requestBody:
- *              required: true
- *              content:
- *                  application/json:
- *                      schema:
- *                          type: object
- *                          properties:
- *                              ids:
- *                                  type: array
- *                                  items:
- *                                      type: string
- *                                  example: ["id1" , "id2" , "id3"]                                                    
- *          responses:
- *              '200':
- *                  description: Successful Response
- *                  content:
- *                      application/json:
- *                          schema:
- *                              $ref: '#components/schemas/responseStudent'
- *              '500':
- *                  description: Internal Server Error
- *                  content: 
- *                      application/json:
- *                          schema:
- *                              $ref: '#components/schemas/responseStudent'
- * 
- * @swagger
+ *   delete:
+ *     summary: Delete students by their IDs
+ *     tags: [Student Database]
+ *     parameters:
+ *       - in: query
+ *         name: uuid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: User UUID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/DeleteRequest'
+ *     responses:
+ *       '200':
+ *         description: Students deleted successfully
+ *       '400':
+ *         description: No IDs provided for deletion
+ *       '404':
+ *         description: User not found
+ *       '500':
+ *         description: Internal Server Error
+ *
  * /home/update:
- *      put:
- *          summary: Update the Selected student with Id
- *          tags: [Student Database]
- *          requestBody:
- *              required: true
- *              content:
- *                  application/json:
- *                      schema: 
- *                          type: object
- *                          properties:
- *                              _id:
- *                                  type: string
- *                                  description: The id of the student need to be updated
- *                                  example: "6a810129fjf012"
- *                         
- *                              formData:
- *                                  type: object
- *                                  description: The data needs to be updated for the student
- *                                  example: 
- *                                      name : "Shriram"
- *                                      roll : "105"
- *                                      above_18 : true
- *          responses:
- *              '200':
- *                  description: Successful Response
- *                  content:
- *                      application/json:
- *                          schema:
- *                              $ref: '#components/schemas/responseStudent'
- *                              
- *              '500':
- *                  description: Internal Server Error
- *                  content: 
- *                      application/json:
- *                          schema:
- *                              $ref: '#components/schemas/responseStudent'
- * 
- * @swagger
- * /home/{id}:
- *      get:
- *          summary: Get the student by the id.
- *          tags: [Student Database]
- *          parameters:
- *              - in: path
- *                name: id
- *                required: true
- *                schema: 
- *                  type: string
- *          responses:
- *              '200':
- *                  description: Successfull response
- *                  content:
- *                      application/json:
- *                          schema:
- *                              $ref: '#components/schemas/responseStudent'
- *              '500':
- *                  description: Successfull response
- *                  content:
- *                      application/json:
- *                          schema:
- *                              $ref: '#components/schemas/responseStudent'                     
+ *   put:
+ *     summary: Update student data
+ *     tags: [Student Database]
+ *     parameters:
+ *       - in: query
+ *         name: uuid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: User UUID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *               formData:
+ *                 $ref: '#/components/schemas/Student'
+ *     responses:
+ *       '200':
+ *         description: Student data updated successfully
+ *       '500':
+ *         description: Internal Server Error
+ *
  */
 
 router.post('/home', async (request, response) => {
@@ -199,7 +170,7 @@ router.post('/home', async (request, response) => {
             User.students.push(newStudent);
             await User.save();
         }
-        response.status(200).json({ message: "Successfully inserted the data" });
+        response.status(200).json({ message: "Successfully inserted the data" , data : newStudent });
 
     } catch (err) {
         response.status(500).json({ error: err.message });
@@ -237,7 +208,7 @@ router.delete('/home/delete', async (request, response) => {
             return !idsToRemove.has(studentIdStr);
         });
         await userData.save();
-        response.status(200).json({ message: "Students deleted succesfully" });
+        response.status(200).json({ message: "Students deleted succesfully" , data : userData.students});
     } catch (error) {
         response.status(500).json({ message: error });
     }
@@ -246,10 +217,10 @@ router.delete('/home/delete', async (request, response) => {
 router.put('/home/update', async (request, response) => {
     try {
         const { id, formData } = request.body;
-        const {uuid}  = request.query;
-        const userData = await user.findOne({userId : uuid});
+        const { uuid } = request.query;
+        const userData = await user.findOne({ userId: uuid });
         for (let index = 0; index < userData.students.length; index++) {
-            if(userData.students[index]._id.toString() === id){
+            if (userData.students[index]._id.toString() === id) {
                 userData.students[index].name = formData.name;
                 userData.students[index].roll = formData.roll;
                 userData.students[index].above_18 = formData.above_18;
@@ -260,17 +231,6 @@ router.put('/home/update', async (request, response) => {
 
     } catch (error) {
         response.status(500).json({ error: 'Some API update backend issue' });
-    }
-})
-
-router.get('/home/:id', async (request, response) => {
-    try {
-        const { id } = request.params;
-        const result = await user.find({ _id: id })
-        response.status(200).json(result);
-
-    } catch (error) {
-        response.status(500).json({ error: 'Cannot get Student with the id' });
     }
 })
 
