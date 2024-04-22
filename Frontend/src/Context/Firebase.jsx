@@ -22,6 +22,7 @@ const firebaseData = getDatabase(firebaseapp);
 const FirebaseContext = createContext(null);
 export const useFirebase = () => useContext(FirebaseContext);
 export default function FirebaseProvider(props) {
+    const [uuid , Setuid] = useState("");
     const [isLoading, Setloading] = useState(false);
     const [alerttoggle, SetAlert] = useState({ show: false, msg: "", type: "" });
     const changeAlert = (msg, type) => {
@@ -44,10 +45,13 @@ export default function FirebaseProvider(props) {
     const loginUser = async (email, password) => {
         try {
             Setloading(true);
-            await signInWithEmailAndPassword(firebaseAuth, email, password);
+            const credentials = await signInWithEmailAndPassword(firebaseAuth, email, password);
+            const user = credentials.user;
+            Setuid(user.uid)
             navigate('/connect');
             changeAlert("User logged in...", "success");
             Setlogin(true);
+
         } catch (error) {
             console.error("Error logging in:", error.message);
             switch (error.code) {
@@ -76,6 +80,7 @@ export default function FirebaseProvider(props) {
             Setloading(true);
             const Usercreds = await createUserWithEmailAndPassword(firebaseAuth, email, password);
             const user = Usercreds.user;
+            Setuid(user.uid);
             const userRef = ref(firebaseData, `users/${user.uid}`);
             await set(userRef, {
                 name,
@@ -114,7 +119,8 @@ export default function FirebaseProvider(props) {
         login,
         logout,
         loginUser,
-        isLoading
+        isLoading,
+        uuid
     }
     return (
         <FirebaseContext.Provider value={states}>

@@ -5,7 +5,7 @@ import { useFirebase } from "../Context/Firebase";
 
 export default function Connect(props) {
     const [data, setData] = useState([]);
-    const { changeAlert } = useFirebase();
+    const { changeAlert , uuid} = useFirebase();
     const [count, setCount] = useState(1);
     const handleCount = () => {
         setCount(counter => counter + 1);
@@ -13,7 +13,11 @@ export default function Connect(props) {
     useEffect(() => {
         async function fetchData() {
             try {
-                const apicall = await fetch('http://localhost:5000/home');
+                const requestOptions = {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                };
+                const apicall = await fetch(`http://localhost:5000/home?uuid=${uuid}` , requestOptions);
                 const files = await apicall.json();
                 setData(files);
             } catch (error) {

@@ -1,10 +1,12 @@
 import { useState } from "react";
 import List_item from "./list_item";
+import { useFirebase } from "../Context/Firebase";
 
 export default function Show(props) {
     const [list, setList] = useState([]);
     const [toggle, setToggle] = useState(false);
     const [formData, setformData] = useState({ name: "", roll: "", above_18: false });
+    const {uuid} = useFirebase();
 
     function getVal(id){
         for (let index = 0; index < props.data.length; index++) {
@@ -14,22 +16,21 @@ export default function Show(props) {
         }
     }
     const updatedItem = (list.length===0) ? "" : getVal(list[0]);
-
-
     const handleupdate = async (event) => {
         event.preventDefault();
         const requestOptions = {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ _id : list[0] , formData})
+            body: JSON.stringify({ id : list[0] , formData})
         };
         try {
-            const response = await fetch('http://localhost:5000/home/update', requestOptions);
+            const response = await fetch(`http://localhost:5000/home/update?uuid=${uuid}`, requestOptions);
             if (response.ok) {
                 props.Alert(`Successfully updated the data for ${updatedItem.name}` , "success");
                 props.change();
             }
             else {
+                console.log(response.error);
                 props.Alert("Problem in updating the data..." , "danger");
             }
         } catch (error) {
@@ -41,10 +42,10 @@ export default function Show(props) {
         try {
             let requestOptions = {
                 method: 'DELETE',
-                body: JSON.stringify({ ids: list }),
+                body: JSON.stringify({ ids: list}),
                 headers: { 'Content-Type': 'application/json' },
             }
-            const response = await fetch('http://localhost:5000/home/delete', requestOptions);
+            const response = await fetch(`http://localhost:5000/home/delete?uuid=${uuid}`, requestOptions);
             if (response.ok) {
                 props.Alert("Records deleted successfully" , "success");
                 setList([]);

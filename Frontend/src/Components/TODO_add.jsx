@@ -1,31 +1,35 @@
 import { useState } from "react";
+import { useFirebase } from "../Context/Firebase";
 
 export default function Add(props) {
+    const {uuid , changeAlert} = useFirebase();
     const [formData, setformData] = useState({ name: "", roll: "", above_18: false });
     const handlesubmit = async (event) => {
         event.preventDefault();
         for (let index = 0; index < props.data.length; index++) {
             if (props.data[index].roll == formData.roll) {
-                props.Alert("Duplicate roll numbers are not allowed" , "warning");
+                changeAlert("Duplicate roll numbers are not allowed" , "warning");
                 return;
             }
         }
+        const body = {...formData , uuid};
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
+            body: JSON.stringify(body)
         };
         try {
+            console.log(formData);
             const response = await fetch('http://localhost:5000/home', requestOptions);
             if (response.ok) {
                 props.change();
                 setformData({ name: "", roll: "", above_18: false })
             }
             else {
-                props.Alert("Problem in adding the data...","danger");
+                changeAlert("Problem in adding the data...","danger");
             }
         } catch (error) {
-            props.Alert("Submit Error!" , "danger");
+            changeAlert("Submit Error!" , "danger");
         }
     }
     return (
