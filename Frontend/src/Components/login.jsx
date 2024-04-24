@@ -97,7 +97,7 @@ export default function Login() {
                     </div>
                     <button type="submit" className="btn btn-primary">Log in</button>
                 </form>
-                <h2 className="text-center mt-5" >New to the app <a href="/">Sign up</a> from here</h2>
+                <h2 className="text-center mt-5" >New to the app <a href="/">Sign up</a> for free</h2>
             </div>
         </>
     );

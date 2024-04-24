@@ -16,7 +16,7 @@ export default function List_item(props) {
     }
     return (
         <tr>
-            <th scope="row">{props.main._id}</th>
+            <th scope="row" >{props.main._id}</th>
             <td>{props.main.name}</td>
             <td>{props.main.roll}</td>
             <td>{(props.main.above_18) ? "Yes" : "No"}</td>

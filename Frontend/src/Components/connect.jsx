@@ -88,7 +88,7 @@ export default function Connect(props) {
                     style={{
                         fontSize: '50px',
                         fontWeight: 'bold',
-                        color: '#333',
+                        color: '#E64833',
                         whiteSpace: 'pre',
                         overflow: 'hidden',
                     }}
@@ -96,7 +96,7 @@ export default function Connect(props) {
                     {databaseText}
                 </span>
             </div>
-            <div className="d-flex flex-row m-3">
+            <div className="d-flex flex-row mt-3" style={{width : "100%"}}>
                 <Add data={data} Alert={changeAlert} change={handleCount} />
                 <Show data={data} Alert={changeAlert} change={handleCount} />
             </div>

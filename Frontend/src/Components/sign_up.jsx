@@ -1,32 +1,35 @@
 import { useState } from "react";
 import { useFirebase } from "../Context/Firebase";
-import imageFile from "../assets/database.png"
 import { useEffect } from "react";
-import logo from "../assets/logo.png"
+import logo from "../assets/logo.png";
+import './Css/new.css';
 
 
 export default function Signup() {
     const { createUser, changeAlert } = useFirebase();
-    const [credentials, Setcredentials] = useState({cf : "" ,  email: "", password: "", First_name: "", Last_name : "",  phone: "" , age : "" })
+    const [credentials, Setcredentials] = useState({ cf: "", email: "", password: "", First_name: "", Last_name: "", phone: "", age: "" })
     const handleSubmit = () => {
-        if (credentials.phone.length !== 10 || !(/^\d+$/.test(credentials.phone)) ) {
+        if (credentials.phone.length !== 10 || !(/^\d+$/.test(credentials.phone))) {
             changeAlert("Phone number is not valid", "warning");
             return;
         }
-        if(credentials.password!== credentials.cf){
+        if (credentials.password !== credentials.cf) {
             changeAlert("Passwords does not match!!", "warning");
             return;
         }
         const name = credentials.First_name + " " + credentials.Last_name;
         console.log(name);
-        if((/^\d+$/.test(name))){
+        if (!/^\D+$/.test(name)) {
             changeAlert("Username is not valid..", "warning");
             return;
         }
-        createUser(credentials.email, credentials.password, name, credentials.phone,credentials.age);
+        console.log("passs");
+        createUser(credentials.email, credentials.password, name, credentials.phone, credentials.age);
     }
     const [text, setText] = useState('');
     const [databaseText, setDatabaseText] = useState('');
+    const [showImage, setShowImage] = useState(false); // State to control image visibility
+
     const targetText = 'Student';
     const targetDatabaseText = 'Database';
 
@@ -48,6 +51,7 @@ export default function Signup() {
                 databaseIndex++;
                 if (databaseIndex > targetDatabaseText.length) {
                     clearInterval(databaseTypingInterval);
+                    setShowImage(true);
                 }
             }, 200);
         };
@@ -55,6 +59,7 @@ export default function Signup() {
             clearInterval(typingInterval);
         };
     }, [targetText, targetDatabaseText]);
+
     return (
         <div className="d-flex">
             <div className="container mt-5" style={{ position: "relative", left: "5%", width: "max-content", padding: 0 }}>
@@ -142,10 +147,12 @@ export default function Signup() {
                         }}
                     >
                         {databaseText}
-                        
                     </span>
+                    {/* Conditionally render the image */}
+                    {showImage && (
+                        <img src={logo} width={400} height={200} style={{ position: 'fixed', top: '60%', right: '8%', animation: 'fadein 2s' }} alt="Error" />
+                    )}
                 </div>
-                <img src={logo} width={400} height={200} style={{ position: 'fixed', top: '60%', right: '8%' }} alt="Error" />
             </div>
         </div>
     );

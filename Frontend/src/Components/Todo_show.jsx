@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import List_item from "./list_item";
 import { useFirebase } from "../Context/Firebase";
 
@@ -6,35 +6,35 @@ export default function Show(props) {
     const [list, setList] = useState([]);
     const [toggle, setToggle] = useState(false);
     const [formData, setformData] = useState({ name: "", roll: "", above_18: false });
-    const {uuid} = useFirebase();
+    const { uuid, changeAlert } = useFirebase();
 
-    function getVal(id){
+    function getVal(id) {
         for (let index = 0; index < props.data.length; index++) {
-            if(id === props.data[index]._id){
+            if (id === props.data[index]._id) {
                 return props.data[index];
             }
         }
     }
-    const updatedItem = (list.length===0) ? "" : getVal(list[0]);
+    const updatedItem = (list.length === 0) ? "" : getVal(list[0]);
     const handleupdate = async (event) => {
         event.preventDefault();
         const requestOptions = {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id : list[0] , formData})
+            body: JSON.stringify({ id: list[0], formData })
         };
         try {
             const response = await fetch(`http://localhost:5000/home/update?uuid=${uuid}`, requestOptions);
             if (response.ok) {
-                props.Alert(`Successfully updated the data for ${updatedItem.name}` , "success");
+                changeAlert(`Successfully updated the data for ${updatedItem.name}`, "success");
                 props.change();
             }
             else {
                 console.log(response.error);
-                props.Alert("Problem in updating the data..." , "danger");
+                changeAlert("Problem in updating the data...", "danger");
             }
         } catch (error) {
-            props.Alert("Update Error!" , "danger");
+            changeAlert("Update Error!", "danger");
         }
     }
 
@@ -42,31 +42,70 @@ export default function Show(props) {
         try {
             let requestOptions = {
                 method: 'DELETE',
-                body: JSON.stringify({ ids: list}),
+                body: JSON.stringify({ ids: list }),
                 headers: { 'Content-Type': 'application/json' },
             }
             const response = await fetch(`http://localhost:5000/home/delete?uuid=${uuid}`, requestOptions);
             if (response.ok) {
-                props.Alert("Records deleted successfully" , "success");
+                changeAlert("Records deleted successfully", "success");
                 setList([]);
                 props.change();
             }
             else {
-                props.Alert("Error in deleting");
+                changeAlert("Error in deleting", "danger");
             }
 
 
         } catch (error) {
-            props.Alert("Error in API delete" , "danger");
+            changeAlert("Error in API delete", "danger");
         }
     }
-
-
+    const [text, setText] = useState('');
+    const targetText = 'Records :';
+    useEffect(() => {
+        let currentIndex = 0;
+        const typingInterval = setInterval(() => {
+            setText(targetText.slice(0, currentIndex + 1));
+            currentIndex++;
+            if (currentIndex > targetText.length) {
+                clearInterval(typingInterval);
+            }
+        }, 100);
+        return () => {
+            clearInterval(typingInterval);
+        };
+    }, [targetText]);
     return (
-        <div className="container">
-            <h1 className="display-3"> Records : </h1>
-            <table className="table">
-                <thead>
+        <div className="container" >
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: "500px",
+                    width: '100%'
+                }}
+            >
+                <span
+                    style={{
+                        fontSize: '75px',
+                        fontWeight: 'bold',
+                        color: '#333',
+                        whiteSpace: 'pre',
+                        overflow: 'hidden',
+                    }}
+                >
+                    {text}
+                    <span
+                        style={{
+                            animation: 'blink 0.5s step-end infinite',
+                        }}
+                    ></span>
+                </span>
+            </div>
+            <table id="mytable" className="table table-striped table-bordered rounded-3">
+                <thead className="table table-dark">
                     <tr>
                         <th scope="col">ID</th>
                         <th scope="col">Name</th>
@@ -86,10 +125,10 @@ export default function Show(props) {
             <button className="btn btn-danger" onClick={handledelete}>Delete</button>
             <button className="btn btn-primary" style={{ marginLeft: "10px" }} onClick={(event) => {
                 if (list.length === 0) {
-                    props.Alert("Please select one of the records.." , "warning");
+                    changeAlert("Please select one of the records..", "warning");
                 }
                 else {
-                    setformData({name : updatedItem.name , roll : updatedItem.roll , above_18 : updatedItem.above_18});
+                    setformData({ name: updatedItem.name, roll: updatedItem.roll, above_18: updatedItem.above_18 });
                     setToggle((prev) => {
                         return !prev;
                     })
@@ -142,7 +181,7 @@ export default function Show(props) {
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={()=>{
+                            <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={() => {
                                 setToggle((prev) => {
                                     return !prev;
                                 })

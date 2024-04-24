@@ -1,22 +1,22 @@
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import { useFirebase } from "../Context/Firebase";
 
 export default function Add(props) {
-    const {uuid , changeAlert} = useFirebase();
+    const { uuid, changeAlert } = useFirebase();
     const [formData, setformData] = useState({ name: "", roll: "", above_18: false });
     const handlesubmit = async (event) => {
         event.preventDefault();
         for (let index = 0; index < props.data.length; index++) {
             if (props.data[index].roll == formData.roll) {
-                changeAlert("Duplicate roll numbers are not allowed" , "warning");
+                changeAlert("Duplicate roll numbers are not allowed", "warning");
                 return;
             }
         }
-        if((/\d/.test(formData.name))){
+        if ((/\d/.test(formData.name))) {
             changeAlert("Number is not allowed in the name field");
             return;
         }
-        const body = {...formData , uuid};
+        const body = { ...formData, uuid };
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -30,15 +30,55 @@ export default function Add(props) {
                 setformData({ name: "", roll: "", above_18: false })
             }
             else {
-                changeAlert("Problem in adding the data...","danger");
+                changeAlert("Problem in adding the data...", "danger");
             }
         } catch (error) {
-            changeAlert("Submit Error!" , "danger");
+            changeAlert("Submit Error!", "danger");
         }
     }
+    const [text, setText] = useState('');
+    const targetText = 'Add Data :';
+    useEffect(() => {
+        let currentIndex = 0;
+        const typingInterval = setInterval(() => {
+            setText(targetText.slice(0, currentIndex + 1));
+            currentIndex++;
+            if (currentIndex > targetText.length) {
+                clearInterval(typingInterval);
+            }
+        }, 100);
+        return () => {
+            clearInterval(typingInterval);
+        };
+    }, [targetText]);
     return (
-        <div className="container">
-            <h1 className="display-3"> Add Data : </h1>
+        <div className="container" style={{ width: "40%" }}>
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width : "500px"
+                }}
+            >
+                <span
+                    style={{
+                        fontSize: '75px',
+                        fontWeight: 'bold',
+                        color: '#333',
+                        whiteSpace: 'pre',
+                        overflow: 'hidden',
+                    }}
+                >
+                    {text}
+                    <span
+                        style={{
+                            animation: 'blink 0.5s step-end infinite',
+                        }}
+                    ></span>
+                </span>
+            </div>
             <form onSubmit={handlesubmit}>
                 <div className="container">
                     <div className="mb-3">
