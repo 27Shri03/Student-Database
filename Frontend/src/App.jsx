@@ -7,6 +7,7 @@ import Login from './Components/login';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import FirebaseProvider from './Context/Firebase.jsx'
 import Loader from './Components/loading.jsx';
+import './app.css';
 
 
 function App() {

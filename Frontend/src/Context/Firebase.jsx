@@ -1,7 +1,7 @@
 import { createContext, useState, useContext } from "react";
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { getDatabase, ref, set } from "firebase/database";
+import { getDatabase, ref, set, child, get } from "firebase/database";
 import { useNavigate } from "react-router-dom";
 
 const firebaseConfig = {
@@ -22,7 +22,8 @@ const firebaseData = getDatabase(firebaseapp);
 const FirebaseContext = createContext(null);
 export const useFirebase = () => useContext(FirebaseContext);
 export default function FirebaseProvider(props) {
-    const [uuid , Setuid] = useState("");
+    const [uuid, Setuid] = useState("");
+    const [name_user, Setname] = useState("");
     const [isLoading, Setloading] = useState(false);
     const [alerttoggle, SetAlert] = useState({ show: false, msg: "", type: "" });
     const changeAlert = (msg, type) => {
@@ -48,6 +49,15 @@ export default function FirebaseProvider(props) {
             const credentials = await signInWithEmailAndPassword(firebaseAuth, email, password);
             const user = credentials.user;
             Setuid(user.uid)
+            const dbRef = ref(firebaseData);
+            const userRef = child(dbRef, `users/${user.uid}`);
+            const snapshot = await get(userRef);
+            if (snapshot.exists()) {
+                const userData = snapshot.val();
+                Setname(userData.name);
+            } else {
+                console.log("User data does not exist in the database.");
+            }
             navigate('/connect');
             changeAlert("User logged in...", "success");
             Setlogin(true);
@@ -58,7 +68,7 @@ export default function FirebaseProvider(props) {
                 case "auth/user-not-found":
                     changeAlert("There is no user record corresponding to this email.", "warning");
                     break;
-                case "auth/wrong-password":
+                case "auth/invalid-credential":
                     changeAlert("The password is invalid for the given email.", "warning");
                     break;
                 case "auth/too-many-requests":
@@ -75,7 +85,7 @@ export default function FirebaseProvider(props) {
             Setloading(false);
         }
     }
-    const createUser = async (email, password, name, phone) => {
+    const createUser = async (email, password, name, phone, age) => {
         try {
             Setloading(true);
             const Usercreds = await createUserWithEmailAndPassword(firebaseAuth, email, password);
@@ -85,8 +95,10 @@ export default function FirebaseProvider(props) {
             await set(userRef, {
                 name,
                 email,
-                phone
-            });
+                phone,
+                age
+            }); 
+            Setname(name);
             Setlogin(true);
             changeAlert("Welcome to the Application....", "success");
             navigate('/connect');
@@ -120,7 +132,8 @@ export default function FirebaseProvider(props) {
         logout,
         loginUser,
         isLoading,
-        uuid
+        uuid,
+        name_user
     }
     return (
         <FirebaseContext.Provider value={states}>

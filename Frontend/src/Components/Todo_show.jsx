@@ -64,7 +64,7 @@ export default function Show(props) {
 
     return (
         <div className="container">
-            <h1 className="display-1"> Records : </h1>
+            <h1 className="display-3"> Records : </h1>
             <table className="table">
                 <thead>
                     <tr>

@@ -1,46 +1,152 @@
 import { useState } from "react";
 import { useFirebase } from "../Context/Firebase";
+import imageFile from "../assets/database.png"
+import { useEffect } from "react";
+import logo from "../assets/logo.png"
+
 
 export default function Signup() {
-    const { createUser } = useFirebase();
-    const [credentials, Setcredentials] = useState({ email: "", password: "", name: "" , phone : "" })
+    const { createUser, changeAlert } = useFirebase();
+    const [credentials, Setcredentials] = useState({cf : "" ,  email: "", password: "", First_name: "", Last_name : "",  phone: "" , age : "" })
+    const handleSubmit = () => {
+        if (credentials.phone.length !== 10 || !(/^\d+$/.test(credentials.phone)) ) {
+            changeAlert("Phone number is not valid", "warning");
+            return;
+        }
+        if(credentials.password!== credentials.cf){
+            changeAlert("Passwords does not match!!", "warning");
+            return;
+        }
+        const name = credentials.First_name + " " + credentials.Last_name;
+        console.log(name);
+        if((/^\d+$/.test(name))){
+            changeAlert("Username is not valid..", "warning");
+            return;
+        }
+        createUser(credentials.email, credentials.password, name, credentials.phone,credentials.age);
+    }
+    const [text, setText] = useState('');
+    const [databaseText, setDatabaseText] = useState('');
+    const targetText = 'Student';
+    const targetDatabaseText = 'Database';
+
+    useEffect(() => {
+        let currentIndex = 0;
+        const typingInterval = setInterval(() => {
+            setText(targetText.slice(0, currentIndex + 1));
+            currentIndex++;
+            if (currentIndex > targetText.length) {
+                clearInterval(typingInterval);
+                startDatabaseTyping();
+            }
+        }, 200);
+
+        const startDatabaseTyping = () => {
+            let databaseIndex = 0;
+            const databaseTypingInterval = setInterval(() => {
+                setDatabaseText(targetDatabaseText.slice(0, databaseIndex + 1));
+                databaseIndex++;
+                if (databaseIndex > targetDatabaseText.length) {
+                    clearInterval(databaseTypingInterval);
+                }
+            }, 200);
+        };
+        return () => {
+            clearInterval(typingInterval);
+        };
+    }, [targetText, targetDatabaseText]);
     return (
-        <div className="d-flex flex-column justify-content-center align-items-center mt-5" >
-            <h1>Let's Get You Signed Up :</h1>
-            <div className="d-flex mt-3">
-                <label htmlFor="username" className="form-label mr-2">Username:</label>
-                <input value={credentials.name} onChange={(event) => {
-                    Setcredentials((prev) => {
-                        return { ...prev, name: event.target.value }
-                    })
-                }} type="text" className="form-control" placeholder="Username" aria-label="Username" id="username" aria-describedby="addon-wrapping" />
-            </div>
-            <div className="d-flex mt-2">
-                <label htmlFor="phone" className="form-label mr-4">Phone Number:</label>
-                <input style={{ width: "206px" }} value={credentials.phone} onChange={(event) => {
-                    Setcredentials((prev) => {
-                        return { ...prev, phone: event.target.value }
-                    })
-                }} type="text" className="form-control mr-5" placeholder="Mobile  No." aria-label="Username" id="phone" aria-describedby="addon-wrapping" />
-            </div>
-            <div className="d-flex flex-row m-2">
-                <label htmlFor="exampleInputEmail1" className="form-label mr-2">Email address:</label>
-                <input onChange={(event) => {
+        <div className="d-flex">
+            <div className="container mt-5" style={{ position: "relative", left: "5%", width: "max-content", padding: 0 }}>
+                <h1 className="ml-3" style={{ fontSize: "50px" }}>Let's Get You Signed Up :</h1>
+                <div className="container mt-4 ml">
+                    <div className="container d-flex">
+                        <input value={credentials.First_name} onChange={(event) => {
+                            Setcredentials((prev) => {
+                                return { ...prev, First_name: event.target.value }
+                            })
+                        }} type="text" className="form-control-lg rounded mr-3" style={{ width: "29%" }} placeholder="First Name" aria-label="Username" aria-describedby="addon-wrapping" />
+                        <input value={credentials.Last_name} onChange={(event) => {
+                            Setcredentials((prev) => {
+                                return { ...prev, Last_name: event.target.value }
+                            })
+                        }} type="text" className="form-control-lg rounded" style={{ width: "29%" }} placeholder="Last Name" aria-label="Username" aria-describedby="addon-wrapping" />
+                    </div>
+                    <div className="container d-flex mt-4">
+                        <input value={credentials.phone} onChange={(event) => {
+                            Setcredentials((prev) => {
+                                return { ...prev, phone: event.target.value }
+                            })
+                        }} type="text" className="form-control-lg rounded mr-3" style={{ width: "29%" }} placeholder="Phone No." aria-label="Username" aria-describedby="addon-wrapping" />
+                        <input value={credentials.age} onChange={(event) => {
+                            Setcredentials((prev) => {
+                                return { ...prev, age: event.target.value }
+                            })
+                        }} type="text" className="form-control-lg rounded" style={{ width: "29%" }} placeholder="Age" aria-label="Username" aria-describedby="addon-wrapping" />
+                    </div>
+                </div>
+
+                <input value={credentials.email} onChange={(event) => {
                     Setcredentials((prev) => {
                         return { ...prev, email: event.target.value }
                     })
-                }} value={credentials.email} style={{ width: "206px" }} type="email" className="form-control mr-4" placeholder="example@gmail.com" id="exampleInputEmail1" aria-describedby="emailHelp" />
-            </div>
-            <div className="d-flex ml-1">
-                <label htmlFor="exampleInputPassword1" className="form-label mr-2">Password:</label>
-                <input onChange={(event) => {
+                }} type="text" className="form-control-lg rounded mt-4" style={{ width: "56%", marginLeft: "30px" }} placeholder="Email" aria-label="Username" aria-describedby="addon-wrapping" />
+                <input value={credentials.password} onChange={(event) => {
                     Setcredentials((prev) => {
                         return { ...prev, password: event.target.value }
                     })
-                }} value={credentials.password} type="password" className="form-control" placeholder="Password" id="exampleInputPassword1" />
+                }} type="password" className="form-control-lg rounded mt-4" style={{ width: "56%", marginLeft: "30px" }} placeholder="Password" aria-label="Username" aria-describedby="addon-wrapping" />
+                <input value={credentials.cf} onChange={(event) => {
+                    Setcredentials((prev) => {
+                        return { ...prev, cf: event.target.value }
+                    })
+                }} type="password" className="form-control-lg rounded mt-4" style={{ width: "56%", marginLeft: "30px" }} placeholder="Confirm Password" aria-label="Username" aria-describedby="addon-wrapping" />
+
+                <button className="btn btn-danger btn-lg mt-4" style={{ width: "56%", marginLeft: "30px" }} onClick={handleSubmit} >Sign up</button>
+                <h2 className="mt-3">Already have an account ? <a href="/login">Log in </a></h2>
             </div>
-            <button onClick={() => { createUser(credentials.email, credentials.password, credentials.name , credentials.phone) }} className="btn btn-primary mt-3">Submit</button>
-            <h3 className="mt-4">Already have an account <a href="/login">Login</a> now</h3>
+            <div className="container d-flex flex-column" style={{ width: '750px' }}>
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        margin: '40px',
+                    }}
+                >
+                    <span
+                        style={{
+                            fontSize: '100px',
+                            fontWeight: 'bold',
+                            color: '#333',
+                            whiteSpace: 'pre',
+                            overflow: 'hidden',
+                            marginRight: '70px'
+                        }}
+                    >
+                        {text}
+                        <span
+                            style={{
+                                animation: 'blink 0.5s step-end infinite',
+                            }}
+                        ></span>
+                    </span>
+                    <span
+                        style={{
+                            fontSize: '100px',
+                            fontWeight: 'bold',
+                            color: '#333',
+                            whiteSpace: 'pre',
+                            overflow: 'hidden',
+                        }}
+                    >
+                        {databaseText}
+                        
+                    </span>
+                </div>
+                <img src={logo} width={400} height={200} style={{ position: 'fixed', top: '60%', right: '8%' }} alt="Error" />
+            </div>
         </div>
     );
 }

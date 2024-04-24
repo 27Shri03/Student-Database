@@ -12,6 +12,10 @@ export default function Add(props) {
                 return;
             }
         }
+        if((/\d/.test(formData.name))){
+            changeAlert("Number is not allowed in the name field");
+            return;
+        }
         const body = {...formData , uuid};
         const requestOptions = {
             method: 'POST',
@@ -34,7 +38,7 @@ export default function Add(props) {
     }
     return (
         <div className="container">
-            <h1 className="display-1"> Add Data : </h1>
+            <h1 className="display-3"> Add Data : </h1>
             <form onSubmit={handlesubmit}>
                 <div className="container">
                     <div className="mb-3">
