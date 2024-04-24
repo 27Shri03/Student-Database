@@ -5,14 +5,14 @@ import { getDatabase, ref, set, child, get } from "firebase/database";
 import { useNavigate } from "react-router-dom";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBLo5j0-QmbHRLR3s5Tq4qWZdAM71VstnE",
-    authDomain: "student-database-f8d76.firebaseapp.com",
-    projectId: "student-database-f8d76",
-    storageBucket: "student-database-f8d76.appspot.com",
-    messagingSenderId: "3555213336",
-    appId: "1:3555213336:web:b2f081678a9442d511c36d",
-    databaseURL: "https://student-database-f8d76-default-rtdb.firebaseio.com/"
-};
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  };
 
 
 const firebaseapp = initializeApp(firebaseConfig);

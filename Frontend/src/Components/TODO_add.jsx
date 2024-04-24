@@ -4,6 +4,7 @@ import { useFirebase } from "../Context/Firebase";
 export default function Add(props) {
     const { uuid, changeAlert } = useFirebase();
     const [formData, setformData] = useState({ name: "", roll: "", above_18: false });
+    const API = import.meta.env.VITE_APP_API_URL;
     const handlesubmit = async (event) => {
         event.preventDefault();
         for (let index = 0; index < props.data.length; index++) {
@@ -24,7 +25,7 @@ export default function Add(props) {
         };
         try {
             console.log(formData);
-            const response = await fetch('http://localhost:5000/home', requestOptions);
+            const response = await fetch(`${API}home`, requestOptions);
             if (response.ok) {
                 props.change();
                 setformData({ name: "", roll: "", above_18: false })

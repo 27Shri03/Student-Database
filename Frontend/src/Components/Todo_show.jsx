@@ -7,7 +7,7 @@ export default function Show(props) {
     const [toggle, setToggle] = useState(false);
     const [formData, setformData] = useState({ name: "", roll: "", above_18: false });
     const { uuid, changeAlert } = useFirebase();
-
+    const API = import.meta.env.VITE_APP_API_URL;
     function getVal(id) {
         for (let index = 0; index < props.data.length; index++) {
             if (id === props.data[index]._id) {
@@ -24,7 +24,7 @@ export default function Show(props) {
             body: JSON.stringify({ id: list[0], formData })
         };
         try {
-            const response = await fetch(`http://localhost:5000/home/update?uuid=${uuid}`, requestOptions);
+            const response = await fetch(`${API}home/update?uuid=${uuid}`, requestOptions);
             if (response.ok) {
                 changeAlert(`Successfully updated the data for ${updatedItem.name}`, "success");
                 props.change();
@@ -45,7 +45,7 @@ export default function Show(props) {
                 body: JSON.stringify({ ids: list }),
                 headers: { 'Content-Type': 'application/json' },
             }
-            const response = await fetch(`http://localhost:5000/home/delete?uuid=${uuid}`, requestOptions);
+            const response = await fetch(`${API}home/delete?uuid=${uuid}`, requestOptions);
             if (response.ok) {
                 changeAlert("Records deleted successfully", "success");
                 setList([]);
@@ -83,7 +83,6 @@ export default function Show(props) {
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    width: "500px",
                     width: '100%'
                 }}
             >

@@ -1,6 +1,8 @@
 const express = require('express');
 const routes = require('./Routes/route.js');
 const cors = require('cors');
+const dotenv = require('dotenv');
+dotenv.config({ path: '.env' });
 const swaggerUI = require("swagger-ui-express");
 const swaggerJsDoc = require("swagger-jsdoc");
 require('./db/config');
@@ -14,7 +16,7 @@ const options = {
       },
       servers: [
         {
-          url: "http://localhost:5000"
+          url: process.env.PORT
         }
       ]
     },

@@ -10,6 +10,7 @@ export default function Connect(props) {
     const handleCount = () => {
         setCount(counter => counter + 1);
     }
+    const API = import.meta.env.VITE_APP_API_URL;
     useEffect(() => {
         async function fetchData() {
             try {
@@ -17,7 +18,7 @@ export default function Connect(props) {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' }
                 };
-                const apicall = await fetch(`http://localhost:5000/home?uuid=${uuid}`, requestOptions);
+                const apicall = await fetch(`${API}home?uuid=${uuid}`, requestOptions);
                 const files = await apicall.json();
                 setData(files);
             } catch (error) {
