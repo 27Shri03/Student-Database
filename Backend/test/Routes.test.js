@@ -11,7 +11,9 @@ describe('Routes', () => {
     before(async () => {
         // Connect to the test database
         await mongoose.connect(process.env.MONGODB_URI);
-        await user.deleteMany({});
+        const Userdata = await user.findOne({userId : process.env.UUID});
+        Userdata.students = [];
+        await Userdata.save();
     });
 
     after(async () => {
