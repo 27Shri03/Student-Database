@@ -70,7 +70,7 @@ export default function Login() {
                         style={{
                             fontSize: '50px',
                             fontWeight: 'bold',
-                            color: '#333',
+                            color: 'blue',
                             whiteSpace: 'pre',
                             overflow: 'hidden',
                         }}

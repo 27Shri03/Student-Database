@@ -8,6 +8,15 @@ export default function Show(props) {
     const [formData, setformData] = useState({ name: "", roll: "", above_18: false });
     const { uuid, changeAlert } = useFirebase();
     const API = import.meta.env.VITE_APP_API_URL;
+
+    function Validator(){
+        if ((/\d/.test(formData.name))) {
+            changeAlert("Number is not allowed in the name field" , "warning");
+            return false;
+        }
+        return true;
+    }
+
     function getVal(id) {
         for (let index = 0; index < props.data.length; index++) {
             if (id === props.data[index]._id) {
@@ -18,6 +27,9 @@ export default function Show(props) {
     const updatedItem = (list.length === 0) ? "" : getVal(list[0]);
     const handleupdate = async (event) => {
         event.preventDefault();
+        if(!Validator()){
+            return;
+        }
         const requestOptions = {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },

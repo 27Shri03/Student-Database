@@ -14,7 +14,7 @@ export default function Add(props) {
             }
         }
         if ((/\d/.test(formData.name))) {
-            changeAlert("Number is not allowed in the name field");
+            changeAlert("Number is not allowed in the name field" , "warning");
             return;
         }
         const body = { ...formData, uuid };
