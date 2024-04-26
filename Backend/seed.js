@@ -1,15 +1,31 @@
+/* 
+
+Welcome to seed.js using this file you can populate your database so that you can test API endpoints using Swagger API testing and work on the data initially.
+
+****************************************************************************
+
+STEP 1: run command " node seed.js " in CMD.
+STEP 2: On frontend log in with the given email and password :
+        EMAIL : test@gmail.com
+        PASSWORD: test123
+STEP 3: In order to use Swagger click on Swagger API testing button.
+STEP 4: UUID required to test the endpoint :  d1xY4xdvrtah6akhMo2J00IooXF3
+
+*/
+
+
 const mongoose = require('mongoose');
 const user = require('./db/users');
-
-mongoose.connect('mongodb://localhost:27017/Student',{
-  serverSelectionTimeoutMS: 60000
-})
+const dotenv = require('dotenv');
+dotenv.config({ path: '.env' });
+mongoose.connect(process.env.MONGODB_URI)
 .then(() => {
   console.log('Connected to MongoDB');
 })
 .catch((err) => {
   console.error('Error connecting to MongoDB:', err);
 });
+
 
 const userData = [
   { name: 'John Agnihotri', roll: '209', above_18: false },
@@ -20,7 +36,9 @@ const userData = [
 
 async function seedDatabase() {
   try {
-    await user.insertMany(userData);
+    const UserData = await user.findOne({userId : "d1xY4xdvrtah6akhMo2J00IooXF3"});
+    UserData.students.push(...userData);
+    await UserData.save();
     console.log('Seed successfully...');
   } catch (error) {
     console.error('Seed Error!!!', error);
