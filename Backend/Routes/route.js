@@ -1,6 +1,6 @@
-const express = require("express")
+import express from 'express';
 const router = express.Router()
-const user = require('../db/users');
+import user from '../db/users.js'
 
 /**
  * @swagger
@@ -207,7 +207,7 @@ router.delete('/home/delete', async (request, response) => {
             return !idsToRemove.has(studentIdStr);
         });
         await userData.save();
-        response.status(200).json({ message: "Students deleted succesfully" , data : userData.students});
+        response.status(200).json({ message: "Students deleted successfully" , data : userData.students});
     } catch (error) {
         response.status(500).json({ message: error });
     }
@@ -233,4 +233,4 @@ router.put('/home/update', async (request, response) => {
     }
 })
 
-module.exports = router; 
+export default router; 

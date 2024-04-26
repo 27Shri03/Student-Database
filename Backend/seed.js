@@ -5,7 +5,7 @@ Welcome to seed.js using this file you can populate your database so that you ca
 ****************************************************************************
 
 STEP 1: run command " node seed.js " in CMD.
-STEP 2: On frontend log in with the given email and password :
+STEP 2: On frontend , log in with the given email and password :
         EMAIL : test@gmail.com
         PASSWORD: test123
 STEP 3: In order to use Swagger click on Swagger API testing button.
@@ -13,10 +13,10 @@ STEP 4: UUID required to test the endpoint :  d1xY4xdvrtah6akhMo2J00IooXF3
 
 */
 
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import user from './db/users.js'
 
-const mongoose = require('mongoose');
-const user = require('./db/users');
-const dotenv = require('dotenv');
 dotenv.config({ path: '.env' });
 mongoose.connect(process.env.MONGODB_URI)
 .then(() => {
