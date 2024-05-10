@@ -84,4 +84,6 @@ To run tests, run the following command in the backend folder
 ```bash
   npm test
 ```
+## Live preview 
+https://github.com/27Shri03/Student-Database/assets/121400894/1131ee61-ad7d-47b8-b33e-5f1c0434c69d
 
