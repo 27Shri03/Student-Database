@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router()
-import user from '../db/users.js'
+import user from '../Models/users.js'
 
 /**
  * @swagger
@@ -98,6 +98,8 @@ import user from '../db/users.js'
  *                 $ref: '#/components/schemas/Student'
  *       '500':
  *         description: Internal Server Error
+ *       '404':
+ *         description: User not found
  *
  * /home/delete:
  *   delete:
@@ -181,7 +183,7 @@ router.get('/home', async (request, response) => {
         const { uuid } = request.query;
         const data = await user.findOne({ userId: uuid });
         if (!data) {
-            return response.json([]);
+            return response.status(404).json([]);
         }
         response.json(data.students);
     } catch (error) {

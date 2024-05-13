@@ -4,7 +4,7 @@ const chai = use(chaiHttp);
 import server from '../index.js';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import user from '../db/users.js';
+import user from '../Models/users.js';
 dotenv.config({ path: '.env' });
 
 describe('Routes', () => {

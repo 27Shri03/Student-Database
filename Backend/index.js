@@ -1,10 +1,10 @@
 import express from 'express';
-import routes from './Routes/route.js';
+import routes from './Controllers/route.js';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import swaggerUI from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
-import './db/config.js';
+import './Models/config.js';
 dotenv.config({ path: '.env' });
 const options = {
     definition: {

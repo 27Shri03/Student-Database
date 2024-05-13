@@ -15,7 +15,7 @@ STEP 4: UUID required to test the endpoint :  d1xY4xdvrtah6akhMo2J00IooXF3
 
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import user from './db/users.js'
+import user from './Models/users.js'
 
 dotenv.config({ path: '.env' });
 mongoose.connect(process.env.MONGODB_URI)
